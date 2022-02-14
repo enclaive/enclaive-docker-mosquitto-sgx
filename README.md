@@ -9,9 +9,6 @@
 >[Intel SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html) delivers advanced hardware and RAM security encryption features, so called enclaves, in order to isolate code and data that are specific to each application. When data and application code run in an enclave additional security, privacy and trust guarantees are given, making the container an ideal choice for (untrusted) cloud environments.
 
 [Overview of Intel SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html)
-<br>[Getting Started: Running on Azure](https://azure.microsoft.com/en-us/solutions/confidential-compute/#overview)
-<br>[Getting Started: Running on OVH Cloud](https://docs.ovh.com/ie/en/dedicated/enable-and-use-intel-sgx/)
-<br>[Getting Started: Running on Desktop]()
 
 Application code executing within an Intel SGX enclave:
 
@@ -28,6 +25,13 @@ Application code executing within an Intel SGX enclave:
 ```console
 todo
 ```
+
+<--! 
+<br>[Getting Started: Running on Azure](https://azure.microsoft.com/en-us/solutions/confidential-compute/#overview)
+<br>[Getting Started: Running on OVH Cloud](https://docs.ovh.com/ie/en/dedicated/enable-and-use-intel-sgx/)
+<br>[Getting Started: Running on Desktop]()
+-->
+
 
 **Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [Environment Variables](#environment-variables) section for a more secure deployment.
 
