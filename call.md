@@ -1,7 +1,13 @@
+Build docker
+```
+	docker build . --no-cache -t mqtt
+```
+
+
 Run docker
  
 ```
-	docker run --device=/dev/sgx_enclave  -p 1883:1884 -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket mqtt
+	docker run --device=/dev/sgx_enclave  -p 1883:1883 -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket mqtt
 ```
 
 Run docker interactive

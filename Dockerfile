@@ -13,7 +13,8 @@ RUN add-apt-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update -y && a
 RUN mkdir /manifest
 
 COPY mosquitto.manifest.template /manifest
-
+COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
+COPY default.conf /etc/mosquitto/conf.d/
 
 RUN cd /manifest \
     && openssl genrsa -3 -out enclave-key.pem 3072 \
