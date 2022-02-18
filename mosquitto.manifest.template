@@ -1,6 +1,8 @@
+# mosquitto example manifest
+
 loader.preload = "file:{{ gramine.libos }}"
 libos.entrypoint = "/usr/sbin/mosquitto"
-loader.log_level = "error"
+loader.log_level = "all"
 loader.log_file = "gramine.log"
 
 loader.env.LD_LIBRARY_PATH = "/lib:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu"
@@ -29,7 +31,7 @@ fs.mount.sbin.type = "chroot"
 fs.mount.sbin.path = "/usr/sbin/"
 fs.mount.sbin.uri = "file:/usr/sbin"
 
-#sgx.debug=true
+sgx.debug=true
 sgx.nonpie_binary = true
 sgx.thread_num = 16
 
@@ -47,9 +49,9 @@ sgx.trusted_files = [
   "file:/usr/sbin/mosquitto",
   "file:/etc/hosts.allow",
   "file:/etc/hosts.deny",
-  "file:/etc/mosquitto/certs/docker.key",
-  "file:/etc/mosquitto/certs/docker.crt",
-  "file:/etc/mosquitto/ca_certificates/ca.crt",
+  "file:/etc/mosquitto/certs/server.key",
+  "file:/etc/mosquitto/certs/server.crt",
+  "file:/etc/mosquitto/certs/ca.crt",
   "file:/etc/mosquitto/conf.d/default.conf",
   
   "file:/etc/nsswitch.conf",

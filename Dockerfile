@@ -10,38 +10,39 @@ RUN apt-get update -y && apt-get install -y \
         apt-utils \
         software-properties-common 
 
+# download mosquitto
 RUN add-apt-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update -y && apt install -y mosquitto
 
-RUN mkdir /manifest
+# add configs
+COPY ./conf/mosquitto.conf /etc/mosquitto/mosquitto.conf
+COPY ./conf/default.conf /etc/mosquitto/conf.d/
 
-COPY mosquitto.manifest.template /manifest
-COPY mosquitto.conf /etc/mosquitto/mosquitto.conf
-COPY default.conf /etc/mosquitto/conf.d/
-COPY ca_certificates/* /etc/mosquitto/ca_certificates/
+# generate server.cert
+WORKDIR /etc/mosquitto/certs
 
-RUN cd /etc/mosquitto/certs/ && \
-    openssl genrsa -out docker.key 2048 && \
-    openssl req -new -out docker.csr -key docker.key -subj "/C=DE/ST=SH/L=Flensburg/O=Enclaive/OU=AI/CN=${DOCKER_IP_ADDRESS}/emailAddress=docker@enclaive.io" && \
-    openssl x509 -req -in docker.csr -CA /etc/mosquitto/ca_certificates/ca.crt -CAkey /etc/mosquitto/ca_certificates/ca.key -CAcreateserial -out docker.crt -days 360
+COPY ./ssl /etc/mosquitto/certs/
+RUN chmod +x cert-gen.sh
+#RUN sed -e "s|*.example.com|${DOCKER_IP_ADDRESS}|g" -i ca.conf      # prepare generation of self-signed certificate
+RUN ./cert-gen.sh                                                    # if no sever.key in /ssl generate self-signed server certificate 
 
-RUN cd /manifest \
-    && openssl genrsa -3 -out enclave-key.pem 3072 \
-    && gramine-manifest \
-    mosquitto.manifest.template mosquitto.manifest \
-    && gramine-sgx-sign \
-    --key enclave-key.pem \
-    --manifest mosquitto.manifest \
-    --output mosquitto.manifest.sgx \
-    && gramine-sgx-get-token -s mosquitto.sig -o mosquitto.token
-
+# sign manifest
 WORKDIR /manifest
 
+COPY mosquitto.manifest.template .
+RUN manifest.sh mosquitto
+
+# clean up: ToDO
+
+# start enclaived mosquitto
+WORKDIR /entrypoint
+
+ENTRYPOINT [ "enclaive.sh" ]
+CMD [ "mosquitto" ]
+
+# ports
 EXPOSE 1883
 EXPOSE 8883
 
-ENTRYPOINT ["gramine-sgx"]
-
-CMD ["mosquitto", "-c", "/etc/mosquitto/mosquitto.conf", "-v"]
 
 
  
