@@ -2,12 +2,10 @@
 
 loader.preload = "file:{{ gramine.libos }}"
 libos.entrypoint = "/usr/sbin/mosquitto"
-loader.log_level = "all"
-loader.log_file = "gramine.log"
+loader.log_level = "error"
 
 loader.env.LD_LIBRARY_PATH = "/lib:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu"
-
-loader.insecure__use_cmdline_argv = true
+loader.argv_src_file = "file:/manifest/trusted_argv"
 
 sys.enable_sigterm_injection = true
 
@@ -31,29 +29,27 @@ fs.mount.sbin.type = "chroot"
 fs.mount.sbin.path = "/usr/sbin/"
 fs.mount.sbin.uri = "file:/usr/sbin"
 
-sgx.debug=true
+fs.mount.manifest.type = "chroot"
+fs.mount.manifest.path = "/manifest"
+fs.mount.manifest.uri = "file:/manifest"
+
 sgx.nonpie_binary = true
 sgx.thread_num = 16
-
-# Memcached does not fail explicitly when enclave memory is exhausted. Instead, Memcached goes into
-# infinite loop without a listening socket. You can trigger this incorrect behavior by increasing
-# the number of threads to 12 (each thread requires 128MB of memory): `mosquitto -t 12`. This is an
-# issue in Memcached source code, not related to Gramine.
 sgx.enclave_size = "1024M"
 
 sgx.trusted_files = [
   "file:{{ gramine.runtimedir() }}/",
   "file:/lib/x86_64-linux-gnu/",
+  "file:/manifest/trusted_argv",
   "file:/usr/lib/x86_64-linux-gnu/",
-  "file:/etc/mosquitto/mosquitto.conf",
   "file:/usr/sbin/mosquitto",
+  "file:/etc/mosquitto/mosquitto.conf",
   "file:/etc/hosts.allow",
   "file:/etc/hosts.deny",
   "file:/etc/mosquitto/certs/server.key",
   "file:/etc/mosquitto/certs/server.crt",
-  "file:/etc/mosquitto/certs/ca.crt",
+  "file:/etc/mosquitto/ca_certificates/ca.crt",
   "file:/etc/mosquitto/conf.d/default.conf",
-  
   "file:/etc/nsswitch.conf",
   "file:/etc/hosts",
   "file:/etc/group",
