@@ -1,6 +1,6 @@
 FROM ubuntu20.04-gramine-os:latest
 
-ARG DOCKER_IP_ADDRESS
+ARG DOCKER_IP_ADDRESS=10.5.0.5
 
 ENV LD_LIBRARY_PATH = "${LD_LIBRARY_PATH}:/usr/lib/x86_64-linux-gnu/:/lib/x86_64-linux-gnu/"
 ENV DEBIAN_FRONTEND noninteractive
