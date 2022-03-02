@@ -1,16 +1,33 @@
 #! /bin/bash
 
-if [ ! -f server.crt ]
-then
-    echo "'server.crt' does not exist. Generating a self-signed server cert from 'ca.conf'"
-    echo "Do NOT use self-signed certificates in production environments."
-	openssl genrsa -out ca.key 2048
-	openssl req -x509 -new -nodes -key ca.key -sha256 -days 1024 -out ca.crt -config ca.conf
-	openssl genrsa -out server.key 2048
-	openssl req -new -key server.key -out server.csr -config ca.conf
-	openssl x509 -req -days 360 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
-	
-else
-    echo "'server.crt' found. Parsing the certificate..."
-fi
+echo "Do NOT use self-signed certificates in production environments."
 
+mkdir ca_certificates
+mkdir server_certs
+mkdir client_certs
+
+# Get IP from Docker
+input="../docker-compose.yml"
+DOCKER_IP_ADDRESS="172.17.0.2"
+
+while IFS= read -r line
+do
+  if [[ $line == *"ipv4_address"* ]] ;
+  then
+        DOCKER_IP_ADDRESS=$(echo "$line" | cut -d ":" -f2 | xargs) 
+  fi
+done < "$input"
+
+echo "IP              = $DOCKER_IP_ADDRESS"
+
+sed -i "s|docker_ip_address|${DOCKER_IP_ADDRESS}|g" conf/server.conf
+sed -i "s|client_ip_address|$(hostname -f)|g" conf/client.conf
+
+openssl genrsa -out ca_certificates/ca.key 2048
+openssl req -x509 -new -nodes -key ca_certificates/ca.key -sha256 -days 1024 -out ca_certificates/ca.crt -config conf/ca.conf
+openssl genrsa -out server_certs/server.key 2048
+openssl req -new -key server_certs/server.key -out server_certs/server.csr -config conf/server.conf
+openssl x509 -req -days 360 -in server_certs/server.csr -CA ca_certificates/ca.crt -CAkey ca_certificates/ca.key -CAcreateserial -out server_certs/server.crt
+openssl genrsa -out client_certs/client.key 2048
+openssl req -new -key client_certs/client.key -out client_certs/client.csr -config conf/client.conf
+openssl x509 -req -days 360 -in client_certs/client.csr -CA ca_certificates/ca.crt -CAkey ca_certificates/ca.key -CAcreateserial -out client_certs/client.crt	
