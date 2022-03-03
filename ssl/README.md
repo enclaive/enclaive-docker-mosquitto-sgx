@@ -1,29 +1,33 @@
 # TLS/SSL Support
-This script creates self-signed certificates to use the encla(i)ved mosquitto with the support of TLS.
-This enables end-to-end security from the publisher over the broker to the subscriber.
-Keep in mind to avoid using self-signed certificates in production environments.
+Support of SSL/TLS protected communication, specifically with mutual authentication enabled, requires the presence of client and server certificates. You may build 
+the docker with certificates from a trusted Certificate Authority or self-signed certificates.
 
-## Create Certificates 
-Run the `cert-gen.sh` script and start enclaved mosquitto application via `docker-compose up`.
-If you have already built a encla(i)ved docker you have to remove the image and build it again.
+**Warning:** Avoid the use of self-signed certificates in production environments.
 
-## Script Description
-The `cert-gen.sh` script creates three certificates. The first one is the root certificate. You can
-find it in the `ca-certificate` folder. The second one is the server certificate, which is used by
-the mosquitto broker. You can find it in the `server_certs` folder. The last certificate can be used
-for the clients. For instance, the mosquitto subscriber or the publisher. 
+## Certificates signed by a CA
 
-## Steps
-To see the mosquitto broker with TLS support in action you have to run the following command in this 
-folder: 
-
+Please copy following files (before build)
 ```
-./cert-gen.sh
+-\       
+-\server_certs\         # server.key, server.crt 
+-\ca_certificates\      # ca.crt
 ```
-After the command is done all certificates have been created and you have to go up to the root folder 
-of the repository. Then run the commands to create a new encla(i)ved mosquitto docker
+The files are installed to the folders configured in `conf/default.conf`.
 
+## Self-Signed Certificates 
+
+Run the certificate generation script
+```sh
+.\cert-gen.sh
+``` 
+and create the root, client and server material. (Edit in folder `ssl/conf` the files `ca.conf`, `client.conf` and `server.conf` to customize the ca, client and server certificate attributes, respectively.) 
+
+Find the ca root certificate in folder `ssl/ca-certificate`, the server private key and certificate in folder `ssl/server_certs`, and the client private key and certificate in folder `ssl/client_certs`. The latter is useful for securing the communication with a mosquitto subscriber or publisher. 
+
+## Build & run
+After all certificates have been created, run the commands to create a the mosquitto-sgx docker as follows
 ```
+cd ..
 docker-compose down --rmi all
 docker-compose build --no-cache
 docker-compose up
@@ -43,8 +47,9 @@ mosquitto_pub -h 10.5.0.5 -p 8883 -t /home/temp/kitchen -m "Temperature: 18°C" 
 ```
 If all works fine you should see the message `Temperature: 18°C` in the open terminal of the subscriber. 
 
-## Change the IP address
-The script takes the IP Address of the `docker-compose.yml` and uses it for the server certificate.
+## (Optional:) Change IP address
+Script `cert-gen.sh` takes the IP Address of the `docker-compose.yml` and uses in the generation of the server certificate.
 If you want to change the IP Address go to the `server.conf` file and change the `commonName` to 
-the IP address of your choice. Don't forget to run the `cert-gen.sh` script afterwards and do the 
-steps from the section Steps above.
+the IP address of your choice. 
+**Note:** Don't forget to run the `cert-gen.sh` script afterwards and do the 
+build&run steps from above.
