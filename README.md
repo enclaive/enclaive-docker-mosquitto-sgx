@@ -162,8 +162,9 @@ docker build -t enclaive/mosquitto-sgx:latest .
 
 ### Configure SSL/TLS broker authentication
 As part of the build process `gen-cert.sh' establishes SSL/TLS authentication. You have two options
-1. Use your own certificates signed by a trusted Certificate Authority. Copy `ca.crt', 'server.key' and `server.crt' to folder `/ssl`
-2. Generate self-signed certificates. Edit `ca.conf` in folder `/ssl` and  generate a self-signed certificate.
+1. Use your own certificates signed by a trusted Certificate Authority. 
+2. Generate self-signed certificates. 
+Follow the instrusctions in [here](./ssl).
 
 **Warning:** We do not recommend the usage of self-signed certificates in production.
 
