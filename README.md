@@ -43,19 +43,17 @@ Following benefits come for free with MOSQUITTO-SGX :
 
 - "Small step for a dev, giant leap for a zero-trust infrastructure"
 - All business advantages from the migration to a (public) cloud without sacraficing on-premise infrastracture trust
-- Hardened security against kernel-space exploits, malicious admins, [UEFI firmware](https://thehackernews.com/2022/02/dozens-of-security-flaws-discovered-in.html) exploits and other "root" attacks using the corruption of the application to infiltrate your network and system
-- Run on any hosting environment irrespectivably of geo-location and comply with privacy export regulation, such as [Schrems-II](https://www.europarl.europa.eu/RegData/etudes/ATAG/2020/652073/EPRS_ATA(2020)652073_EN.pdf)
+- Hardened security against kernel-space exploits, malicious or accidental privileged insider attacks, [UEFI firmware](https://thehackernews.com/2022/02/dozens-of-security-flaws-discovered-in.html) exploits and other "root" attacks corrupting the application to infiltrate the network and system
+- Run on any hosting environment irrespectivably of geo-location and comply with privacy export regulations, such as [Schrems-II](https://www.europarl.europa.eu/RegData/etudes/ATAG/2020/652073/EPRS_ATA(2020)652073_EN.pdf)
 - GDPR/CCPA compliant processing of user data ("data in use") in the cloud as data is anonymized thanks to the enclave
 
 
 ## TL;DR
 
 ```console
-docker-compose down
-docker-compose build
 docker-compose up
 ```
-**Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [Environment Variables](#environment-variables) section for a more secure deployment.
+**Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [build](#build-the-image) section for a more secure deployment.
 
 <!-- DEPLOY IN THE CLOUD -->
 ## How to deploy MOSQUITTO-SGX in a zero-trust cloud?
@@ -161,15 +159,29 @@ docker build -t enclaive/mosquitto-sgx:latest .
 
 
 ### Configure SSL/TLS broker authentication
-As part of the build process `gen-cert.sh' establishes SSL/TLS authentication. You have two options
+As part of the build process `gen-cert.sh` establishes SSL/TLS authentication. You have two options
 1. Use your own certificates signed by a trusted Certificate Authority. 
 2. Generate self-signed certificates. 
 Follow the instrusctions in [here](./ssl).
 
 **Warning:** We do not recommend the usage of self-signed certificates in production.
 
+### Configure network ports
+Edit `conf/default.conf` to eanble the ports the broker should listen as follows
+```
+# Plain MQTT protocol
+listener 1883
 
-
+# MQTTS protocol
+listener 8883
+```
+### Configure password authentication
+Edit `conf/default.conf` to eanble password authentication as follows
+```
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+```
+**Note:** Password file `passwd` is a list of user:pass tuples where the pass is hashed with [crypt(3)](https://linux.die.net/man/3/crypt). We recommend the mosquitto password manager manual for additional [details](https://mosquitto.org/man/mosquitto_passwd-1.html). 
 <!-- CONTRIBUTING -->
 ## Contributing
 
