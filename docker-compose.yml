@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  mqtt:
+    image: ubuntu20.04-mosquitto
+    container_name: "mosquitto-broker"
+    build:
+      context: .    
+      args:
+        - DOCKER_IP_ADDRESS=10.5.0.5
+    #restart: always
+    volumes:
+      - /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+    devices:
+      - "/dev/sgx_enclave:/dev/sgx_enclave"
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
