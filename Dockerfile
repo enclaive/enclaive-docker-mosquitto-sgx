@@ -3,6 +3,7 @@ FROM ubuntu20.04-gramine-os:latest
 ENV LD_LIBRARY_PATH = "${LD_LIBRARY_PATH}:/usr/lib/x86_64-linux-gnu/:/lib/x86_64-linux-gnu/"
 ENV DEBIAN_FRONTEND noninteractive
 ENV SGX_SIGNER_KEY /gramine-os/sgx-signer-key/enclaive-key.pem
+ARG DOCKER_IP_ADDRESS
 RUN apt-get update -y && apt-get install -y \
         openssl \
         apt-utils \
@@ -20,8 +21,10 @@ COPY ssl/server_certs/ /etc/mosquitto/certs
 # sign manifest
 WORKDIR /manifest 
 COPY mosquitto.manifest.template .
-RUN gramine-argv-serializer "mosquitto" "-c" "/etc/mosquitto/mosquitto.conf" "-v" > trusted_argv && \
-    ./manifest.sh mosquitto 
+COPY ./ssl .
+RUN ./cert-gen.sh ${DOCKER_IP_ADDRESS}  \
+    && gramine-argv-serializer "mosquitto" "-c" "/etc/mosquitto/mosquitto.conf" "-v" > trusted_argv \    
+    && ./manifest.sh mosquitto 
 
 # ports
 EXPOSE 1883

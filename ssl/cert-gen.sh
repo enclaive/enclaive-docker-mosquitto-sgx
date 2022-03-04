@@ -2,6 +2,8 @@
 
 echo "Do NOT use self-signed certificates in production environments."
 
+if [ -z "$1" ]; then
+
 mkdir ca_certificates
 mkdir server_certs
 mkdir client_certs
@@ -31,3 +33,14 @@ openssl x509 -req -days 360 -in server_certs/server.csr -CA ca_certificates/ca.c
 openssl genrsa -out client_certs/client.key 2048
 openssl req -new -key client_certs/client.key -out client_certs/client.csr -config conf/client.conf
 openssl x509 -req -days 360 -in client_certs/client.csr -CA ca_certificates/ca.crt -CAkey ca_certificates/ca.key -CAcreateserial -out client_certs/client.crt	
+
+else
+
+sed -i "s|docker_ip_address|${DOCKER_IP_ADDRESS}|g" conf/server.conf
+openssl genrsa -out /etc/mosquitto/ca_certificates/ca.key 2048
+openssl req -x509 -new -nodes -key /etc/mosquitto/ca_certificates/ca.key -sha256 -days 1024 -out /etc/mosquitto/ca_certificates/ca.crt -config conf/ca.conf
+openssl genrsa -out /etc/mosquitto/certs/server.key 2048
+openssl req -new -key /etc/mosquitto/certs/server.key -out /etc/mosquitto/certs/server.csr -config conf/server.conf
+openssl x509 -req -days 360 -in /etc/mosquitto/certs/server.csr -CA /etc/mosquitto/ca_certificates/ca.crt -CAkey /etc/mosquitto/ca_certificates/ca.key -CAcreateserial -out /etc/mosquitto/certs/server.crt
+
+fi
