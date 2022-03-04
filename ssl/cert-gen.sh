@@ -34,7 +34,8 @@ openssl genrsa -out client_certs/client.key 2048
 openssl req -new -key client_certs/client.key -out client_certs/client.csr -config conf/client.conf
 openssl x509 -req -days 360 -in client_certs/client.csr -CA ca_certificates/ca.crt -CAkey ca_certificates/ca.key -CAcreateserial -out client_certs/client.crt	
 
-else
+elif [[ -n "$1" && ! -e "/etc/mosquitto/ca_certificates/ca.crt" ]] ;
+then
 
 sed -i "s|docker_ip_address|${DOCKER_IP_ADDRESS}|g" conf/server.conf
 openssl genrsa -out /etc/mosquitto/ca_certificates/ca.key 2048
