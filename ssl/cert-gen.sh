@@ -3,7 +3,7 @@
 echo "Do NOT use self-signed certificates in production environments."
 
 if [ -z "$1" ]; then
-
+echo "Create certificates from"
 mkdir ca_certificates
 mkdir server_certs
 mkdir client_certs
@@ -18,12 +18,12 @@ do
   then
         DOCKER_IP_ADDRESS=$(echo "$line" | cut -d ":" -f2 | xargs) 
   fi
-done < "$input"
+done < "$input" || exit 1 
 
 echo "IP              = $DOCKER_IP_ADDRESS"
 
-sed -i "s|docker_ip_address|${DOCKER_IP_ADDRESS}|g" conf/server.conf
-sed -i "s|client_ip_address|$(hostname -f)|g" conf/client.conf
+sed -i "s|.*commonName.*|commonName=${DOCKER_IP_ADDRESS}|g" conf/server.conf
+sed -i "s|.*commonName.*|commonName=$(hostname -f)|g" conf/client.conf
 
 openssl genrsa -out ca_certificates/ca.key 2048
 openssl req -x509 -new -nodes -key ca_certificates/ca.key -sha256 -days 1024 -out ca_certificates/ca.crt -config conf/ca.conf
@@ -37,7 +37,7 @@ openssl x509 -req -days 360 -in client_certs/client.csr -CA ca_certificates/ca.c
 elif [[ -n "$1" && ! -e "/etc/mosquitto/ca_certificates/ca.crt" ]] ;
 then
 
-sed -i "s|docker_ip_address|${DOCKER_IP_ADDRESS}|g" conf/server.conf
+sed -i "s|.*commonName.*|commonName=${DOCKER_IP_ADDRESS}|g" conf/server.conf
 openssl genrsa -out /etc/mosquitto/ca_certificates/ca.key 2048
 openssl req -x509 -new -nodes -key /etc/mosquitto/ca_certificates/ca.key -sha256 -days 1024 -out /etc/mosquitto/ca_certificates/ca.crt -config conf/ca.conf
 openssl genrsa -out /etc/mosquitto/certs/server.key 2048
