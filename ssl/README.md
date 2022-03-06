@@ -19,7 +19,7 @@ Edit in folder `ssl/conf` files `ca.conf`, `client.conf` and `server.conf` to cu
 
 Some hints:
 - client and server common name must be different
-- server common name must be the IP address/hostname subscriber and publisher invoke
+- server common name must be the IP address/hostname subscriber and publisher invoke (default: 10.5.0.5)
 - for testing `--insecure` parameter allows clients to ignore the ca validition
 
 Run the certificate generation script
