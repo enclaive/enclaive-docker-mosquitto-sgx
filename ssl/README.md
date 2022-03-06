@@ -15,17 +15,23 @@ Please copy following files (before build)
 The files are installed to the folders configured in `conf/default.conf`.
 
 ## Self-Signed Certificates 
+Edit in folder `ssl/conf` files `ca.conf`, `client.conf` and `server.conf` to customize the ca, client and server certificate attributes, respectively.
+
+Some hints:
+- client and server common name must be different
+- server common name must be the IP address/hostname subscriber and publisher invoke (default: 10.5.0.5)
+- for testing `--insecure` parameter allows clients to ignore the ca validition
 
 Run the certificate generation script
 ```sh
-.\cert-gen.sh
+DOCKER_IP_ADDRESS=10.5.0.5 .\cert-gen.sh
 ``` 
-and create the root, client and server material. (Edit in folder `ssl/conf` the files `ca.conf`, `client.conf` and `server.conf` to customize the ca, client and server certificate attributes, respectively.) 
+and create the root, client and server material.
 
 Find the ca root certificate in folder `ssl/ca-certificate`, the server private key and certificate in folder `ssl/server_certs`, and the client private key and certificate in folder `ssl/client_certs`. The latter is useful for securing the communication with a mosquitto subscriber or publisher. 
 
 ## Build & run
-After all certificates have been created, run the commands to create a the mosquitto-sgx docker as follows
+After all certificates have been created, run the commands to create a the mosquitto-sgx docker
 ```
 cd ..
 docker-compose down --rmi all
@@ -46,10 +52,3 @@ root folder. Run the command
 mosquitto_pub -h 10.5.0.5 -p 8883 -t /home/temp/kitchen -m "Temperature: 18°C" --cafile ssl/ca_certificates/ca.crt --cert ssl/client_certs/client.crt --key ssl/client_certs/client.key
 ```
 If all works fine you should see the message `Temperature: 18°C` in the open terminal of the subscriber. 
-
-## (Optional:) Change IP address
-Script `cert-gen.sh` takes the IP Address of the `docker-compose.yml` and uses in the generation of the server certificate.
-If you want to change the IP Address go to the `server.conf` file and change the `commonName` to 
-the IP address of your choice. 
-**Note:** Don't forget to run the `cert-gen.sh` script afterwards and do the 
-build&run steps from above.

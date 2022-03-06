@@ -2,13 +2,12 @@ version: '2'
 
 services:
   mqtt:
-    image: ubuntu20.04-mosquitto
-    container_name: "mosquitto-broker"
+    image: enclaive/mosquitto-sgx
+    container_name: "mosquitto-sgx"
     build:
       context: .    
       args:
         - DOCKER_IP_ADDRESS=10.5.0.5
-    #restart: always
     volumes:
       - /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket
     ports:
