@@ -51,6 +51,7 @@ Following benefits come for free with MOSQUITTO-SGX :
 ## TL;DR
 
 ```console
+docker pull enclaive/mosquitto-sgx
 docker-compose up
 ```
 **Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [build](#build-the-image) section for a more secure deployment.
@@ -128,7 +129,7 @@ $ docker pull enclaive/mosquitto-sgx:[TAG]
 
 Run docker 
 ```
-docker run -it -p 1883:1883 -p 8883:8883 --device=/dev/sgx_enclave  -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket mosquitto-sgx	
+docker run -it -p 1883:1883 -p 8883:8883 --device=/dev/sgx_enclave  -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket enclaive/mosquitto-sgx	
 ```
 
 ## Publishing and subscribing to a topic
@@ -153,7 +154,6 @@ mosquitto_pub -h 10.5.0.5 -p 1883 -t /home/sensors/temp/kitchen -m "Kitchen Temp
 If you wish, you can also build the image yourself.
 
 ```console
-git clone https://github.com/enclaive/enclaive-docker-mosquitto-sgx.git
 docker build -t enclaive/mosquitto-sgx:latest . 
 ```
 
