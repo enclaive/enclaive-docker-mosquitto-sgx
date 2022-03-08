@@ -1,4 +1,4 @@
-FROM ubuntu20.04-gramine-os:latest
+FROM enclaive/gramine-os:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 ARG DOCKER_IP_ADDRESS=10.5.0.5
