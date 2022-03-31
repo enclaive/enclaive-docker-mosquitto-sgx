@@ -17,8 +17,6 @@ then
   openssl req -new -key client_certs/client.key -out client_certs/client.csr -config conf/client.conf
   openssl x509 -req -days 360 -in client_certs/client.csr -CA ca_certificates/ca.crt -CAkey ca_certificates/ca.key -CAcreateserial -out client_certs/client.crt	
 
-
 else
     echo "'ca.crt' found. Parsing the certificate..."
 fi
-
