@@ -1,27 +1,16 @@
 version: '2'
 
 services:
-  mqtt:
-    image: enclaive/mosquitto-sgx
+  mosquitto-sgx:
+    image: enclaive/mosquitto
     container_name: "mosquitto-sgx"
     build:
-      context: .    
-      args:
-        - DOCKER_IP_ADDRESS=10.5.0.5
-    volumes:
-      - /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket
-    ports:
-      - "1883:1883"
-      - "8883:8883"
+      context: .
     devices:
       - "/dev/sgx_enclave:/dev/sgx_enclave"
-    networks:
-      vpcbr:
-        ipv4_address: 10.5.0.5
-networks:
-  vpcbr:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
-          gateway: 10.5.0.1
+  mosquitto:
+    image: enclaive/mosquitto
+    container_name: "mosquitto"
+    entrypoint: ""
+    build:
+      context: .

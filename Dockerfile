@@ -8,7 +8,7 @@ RUN apt-get update -y && apt-get install -y \
         software-properties-common 
 
 # download mosquitto
-RUN add-apt-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update -y && apt install -y mosquitto
+RUN add-apt-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get update -y && apt install -y mosquitto mosquitto-clients
 
 # add configs
 WORKDIR /etc/mosquitto
