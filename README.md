@@ -1,10 +1,12 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://enclaive.io/products/">
-    <img src="images/mosquitto-sgx.png" alt="Logo" width="120" >
+<table>
+<tr><td>
+  <a href="https://enclaive.io/products/mosquitto">
+    <img alt="mosquitto-sgx" height=64px src="https://raw.githubusercontent.com/eclipse/mosquitto/master/logo/mosquitto-logo-min.svg">
   </a>
-
+</td></tr></table>
   <h2 align="center">MOSQUITTO-SGX: SGX-ready Mosquitto MQTT Broker</h2>
 
   <p align="center">
@@ -19,6 +21,16 @@
     <a href="https://github.com/enclaive/enclaive-docker-mosquitto-sgx/issues">Request Feature</a>
   </p>
 </div>
+
+## TL;DR
+
+```console
+docker pull enclaive/mosquitto-sgx
+# or
+docker compose up
+```
+**Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [build](#build-the-image) section for a more secure deployment.
+
 
 ## What is Mosquitto and SGX?
 
@@ -46,15 +58,6 @@ Following benefits come for free with MOSQUITTO-SGX :
 - Hardened security against kernel-space exploits, malicious or accidental privileged insider attacks, [UEFI firmware](https://thehackernews.com/2022/02/dozens-of-security-flaws-discovered-in.html) exploits and other "root" attacks corrupting the application to infiltrate the network and system
 - Run on any hosting environment irrespectivably of geo-location and comply with privacy export regulations, such as [Schrems-II](https://www.europarl.europa.eu/RegData/etudes/ATAG/2020/652073/EPRS_ATA(2020)652073_EN.pdf)
 - GDPR/CCPA compliant processing of user data ("data in use") in the cloud as data is anonymized thanks to the enclave
-
-
-## TL;DR
-
-```console
-docker pull enclaive/mosquitto-sgx
-docker-compose up
-```
-**Warning**: This quick setup is only intended for development environments. You are encouraged to change the insecure default credentials and check out the available configuration options in the [build](#build-the-image) section for a more secure deployment.
 
 <!-- DEPLOY IN THE CLOUD -->
 ## How to deploy MOSQUITTO-SGX in a zero-trust cloud?
