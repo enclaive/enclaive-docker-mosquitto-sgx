@@ -1,7 +1,9 @@
 FROM enclaive/gramine-os:latest
 
 ENV DEBIAN_FRONTEND noninteractive
+
 ARG DOCKER_IP_ADDRESS=10.5.0.5
+
 RUN apt-get update -y && apt-get install -y \
         openssl \
         apt-utils \
@@ -27,6 +29,7 @@ RUN chmod +x cert-gen.sh && ./cert-gen.sh
 # sign manifest
 WORKDIR /manifest 
 COPY mosquitto.manifest.template .
+
 RUN gramine-argv-serializer "mosquitto" "-c" "/etc/mosquitto/mosquitto.conf" "-v" > trusted_argv \    
     && ./manifest.sh mosquitto 
 
